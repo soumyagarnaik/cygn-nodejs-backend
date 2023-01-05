@@ -1,5 +1,6 @@
 import express from 'express'
 import mongoose from 'mongoose';
+import asyncHandler from 'express-async-handler'
 
 import Appointment from '../models/appointment.js';
 
@@ -14,12 +15,36 @@ export const getAppointments = async (req, res) => {
     }
 }
 
+export const getAppointmentByLabId= asyncHandler(async(req,res)=>{
+    const {id} = req.params;
+    const appointment=await Appointment.find({billid : id})
+    if(appointment){
+        res.json(appointment)
+    }else{
+        res.status(404)
+        throw new Error('appointment not found')
+        
+    }
+    
+})
+export const updatePendingBills  = asyncHandler(async(req,res) => {
+    const {id} = req.params;
+    const appointment = await Appointment.find({billid : id})
+    if(appointment[0]) {
+        appointment[0].bill_details.push({amount_paid: req.body.amount_paid,
+            due_balance: (appointment[0].bill_details && appointment[0].bill_details[appointment[0].bill_details.length-1] && appointment[0].bill_details[appointment[0].bill_details.length-1].due_balance) -req.body.amount_paid})
+        const updateData = await appointment[0].save()
+        res.json(updateData)
+    }
+})
 export const createLabAppointment = async (req, res) => {
     const {  billid,amount,discount_amount,amount_paid,appointment,due_balance,bill_transaction_number,
         bill_transaction_type, group,date,lab_appointment} = req.body;
-
-    const newLabAppointment = new Appointment({ billid,amount,discount_amount,appointment,amount_paid,due_balance,bill_transaction_number,
+    let bill_details = []
+    bill_details.push({amount_paid:amount_paid,due_balance:due_balance})
+    const newLabAppointment = new Appointment({ billid,amount,discount_amount,appointment,bill_details,bill_transaction_number,
         bill_transaction_type,lab_appointment, group,date })
+    
     try {
         await newLabAppointment.save();
 

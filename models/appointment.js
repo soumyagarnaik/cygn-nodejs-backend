@@ -4,12 +4,18 @@ const appointmentSchema = mongoose.Schema({
     billid: String,
     amount: String,
     discount_amount:String,
-    amount_paid:String,
-    due_balance:String,
     appointment:String,
     bill_transaction_number:String,
     bill_transaction_type:String,
     lab_appointment:String,
+    bill_details:[{
+        amount_paid : {type :String},
+        due_balance : {type :String},
+        due_settlement_date : {
+            type: Date,
+            default: new Date(),
+        }
+    }],
     group:Number,
     date: String
 })
