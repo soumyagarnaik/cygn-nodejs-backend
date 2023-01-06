@@ -13,7 +13,7 @@ const appointmentSchema = mongoose.Schema({
         due_balance : {type :String},
         due_settlement_date : {
             type: Date,
-            default: new Date(),
+            default: Date.now,
         }
     }],
     group:Number,
