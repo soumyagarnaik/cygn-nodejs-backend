@@ -5,12 +5,12 @@ const appointmentSchema = mongoose.Schema({
     amount: String,
     discount_amount:String,
     appointment:String,
-    bill_transaction_number:String,
-    bill_transaction_type:String,
     lab_appointment:String,
     bill_details:[{
         amount_paid : {type :String},
         due_balance : {type :String},
+        bill_transaction_type: {type :String},
+        bill_transaction_number:{type :String},
         due_settlement_date : {
             type: Date,
             default: Date.now,
